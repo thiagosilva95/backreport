@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="comprovante-agendamento" pageWidth="595" pageHeight="842" columnWidth="575" leftMargin="10" rightMargin="10" topMargin="5" bottomMargin="5">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="19"/>
+	<parameter name="P_CD_AGENDAMENTO" class="java.lang.Integer"/>
+	<parameter name="P_NM_EMPRESA" class="java.lang.String"/>
+	<parameter name="P_CD_CLIENTE" class="java.lang.Integer"/>
+	<parameter name="P_CD_EMPRESA" class="java.lang.Integer"/>
+	<parameter name="P_USUARIO" class="java.lang.String"/>
+	<parameter name="P_SYSDATE" class="java.lang.String"/>
+	<parameter name="P_CD_CONFIRMACAO_AGENDAMENTO" class="java.lang.String"/>
+	<parameter name="P_NR_PROTOCOLO" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\projects\\report\\backreport\\src\\main\\resources\\reports\\comprovante-agendamento\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT ag.cd_agendamento
+     , ag.cd_confirmacao_agendamento
+     , ca.nr_protocolo
+     , decode(ag.sn_encaixe, 'S', 'Sim', 'N','Não') sn_encaixe
+     , to_char(ag.ts_horario_inicial, 'dd/MM/yyyy') data_agenda
+     , to_char(ag.ts_horario_inicial, 'hh24:mi') ts_horario_inicial
+     , to_char(ag.ts_horario_final, 'hh24:mi') ts_horario_final
+     , pac.cd_paciente
+     , pac.nm_paciente
+     , decode(pac.cd_sexo, 'M', 'Masculino', 'F', 'Feminino', 'Indefinido') cd_sexo
+     , to_char(pac.ts_nascimento, 'dd/MM/yyyy') ts_nascimento
+     , ca.ds_email_comprovante
+     , ca.nr_telefone_comprovante
+     , a.cd_agenda
+     , ta.cd_tipo_agendamento
+     , ta.ds_tipo_agendamento
+     , tm.cd_tipo_marcacao
+     , tm.ds_tipo_marcacao
+     , u.cd_unidade
+     , u.ds_unidade
+     , u.nr_telefone_contato nr_telefone_contato_unidade
+     , u.cd_endereco
+     , tl.ds_tipo_logradouro
+     , en.ds_endereco
+     , b.ds_bairro
+     , cid.ds_cidade
+     , cid.cd_estado
+     , s.cd_servico
+     , s.ds_servico
+     , p.cd_profissional_saude
+     , p.nm_profissional_saude
+     , r.cd_recurso
+     , r.ds_recurso
+     , c.cd_convenio
+     , c.ds_convenio
+     , pla.cd_plano
+     , pla.ds_plano
+     , ca.cd_usu_criacao cd_usuario_confirmacao
+FROM mvagenda.agendamento ag
+    ,mvagenda.confirmacao_agendamento ca
+    ,mvagenda.convenio c
+    ,mvagenda.plano pla
+    ,mvagenda.agenda a
+    ,mvagenda.tipo_agendamento ta
+    ,mvagenda.tipo_marcacao tm
+    ,mvagenda.servico s
+    ,mvagenda.unidade u
+    ,mvagenda.paciente pac
+    ,mvagenda.profissional_saude p
+    ,mvagenda.recurso r
+    ,mvagenda.endereco en
+    ,mvagenda.tipo_logradouro tl
+    ,mvagenda.bairro b
+    ,mvagenda.cidade cid
+WHERE ag.cd_agenda = a.cd_agenda
+AND ag.cd_confirmacao_agendamento = ca.cd_confirmacao_agendamento
+AND a.cd_servico = s.cd_servico
+AND a.cd_unidade = u.cd_unidade
+AND a.cd_profissional_saude = p.cd_profissional_saude(+)
+AND ag.cd_paciente = pac.cd_paciente
+AND a.cd_tipo_agendamento = ta.cd_tipo_agendamento
+AND ag.cd_tipo_marcacao = tm.cd_tipo_marcacao(+)
+AND ag.cd_convenio = c.cd_convenio
+AND ag.cd_plano = pla.cd_plano
+AND pla.cd_convenio = c.cd_convenio
+AND s.cd_tipo_agendamento = ta.cd_tipo_agendamento
+AND r.cd_recurso(+) = a.cd_recurso
+AND u.cd_endereco = en.cd_endereco(+)
+AND en.cd_tipo_logradouro = tl.cd_tipo_logradouro(+)
+AND en.cd_bairro = b.cd_bairro(+)
+AND b.cd_cidade = cid.cd_cidade(+)
+AND ag.cd_confirmacao_agendamento = $P{P_CD_CONFIRMACAO_AGENDAMENTO}
+ORDER BY ag.ts_horario_inicial DESC]]>
+	</queryString>
+	<field name="CD_AGENDAMENTO" class="java.math.BigDecimal"/>
+	<field name="CD_CONFIRMACAO_AGENDAMENTO" class="java.math.BigDecimal"/>
+	<field name="NR_PROTOCOLO" class="java.lang.String"/>
+	<field name="SN_ENCAIXE" class="java.lang.String"/>
+	<field name="DATA_AGENDA" class="java.lang.String"/>
+	<field name="TS_HORARIO_INICIAL" class="java.lang.String"/>
+	<field name="TS_HORARIO_FINAL" class="java.lang.String"/>
+	<field name="CD_PACIENTE" class="java.math.BigDecimal"/>
+	<field name="NM_PACIENTE" class="java.lang.String"/>
+	<field name="CD_SEXO" class="java.lang.String"/>
+	<field name="TS_NASCIMENTO" class="java.lang.String"/>
+	<field name="DS_EMAIL_COMPROVANTE" class="java.lang.String"/>
+	<field name="NR_TELEFONE_COMPROVANTE" class="java.lang.String"/>
+	<field name="CD_AGENDA" class="java.math.BigDecimal"/>
+	<field name="CD_TIPO_AGENDAMENTO" class="java.math.BigDecimal"/>
+	<field name="DS_TIPO_AGENDAMENTO" class="java.lang.String"/>
+	<field name="CD_TIPO_MARCACAO" class="java.math.BigDecimal"/>
+	<field name="DS_TIPO_MARCACAO" class="java.lang.String"/>
+	<field name="CD_UNIDADE" class="java.math.BigDecimal"/>
+	<field name="DS_UNIDADE" class="java.lang.String"/>
+	<field name="NR_TELEFONE_CONTATO_UNIDADE" class="java.lang.String"/>
+	<field name="CD_ENDERECO" class="java.math.BigDecimal"/>
+	<field name="DS_TIPO_LOGRADOURO" class="java.lang.String"/>
+	<field name="DS_ENDERECO" class="java.lang.String"/>
+	<field name="DS_BAIRRO" class="java.lang.String"/>
+	<field name="DS_CIDADE" class="java.lang.String"/>
+	<field name="CD_ESTADO" class="java.lang.String"/>
+	<field name="CD_SERVICO" class="java.lang.Integer"/>
+	<field name="DS_SERVICO" class="java.lang.String"/>
+	<field name="CD_PROFISSIONAL_SAUDE" class="java.math.BigDecimal"/>
+	<field name="NM_PROFISSIONAL_SAUDE" class="java.lang.String"/>
+	<field name="CD_RECURSO" class="java.math.BigDecimal"/>
+	<field name="DS_RECURSO" class="java.lang.String"/>
+	<field name="CD_CONVENIO" class="java.math.BigDecimal"/>
+	<field name="DS_CONVENIO" class="java.lang.String"/>
+	<field name="CD_PLANO" class="java.math.BigDecimal"/>
+	<field name="DS_PLANO" class="java.lang.String"/>
+	<field name="CD_USUARIO_CONFIRMACAO" class="java.lang.String"/>
+	<group name="GP_PACIENTE">
+		<groupExpression><![CDATA[$F{CD_PACIENTE}]]></groupExpression>
+		<groupHeader>
+			<band height="46">
+				<frame>
+					<reportElement x="0" y="0" width="575" height="46"/>
+					<staticText>
+						<reportElement x="0" y="0" width="100" height="14"/>
+						<textElement>
+							<font fontName="Arial" isBold="true" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Paciente:]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="29" y="15" width="30" height="14"/>
+						<textElement>
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Nome:]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement x="61" y="15" width="299" height="14"/>
+						<textElement/>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{NM_PACIENTE}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="367" y="15" width="53" height="14"/>
+						<textElement/>
+						<text><![CDATA[Data Nasc.:]]></text>
+					</staticText>
+					<textField isBlankWhenNull="true">
+						<reportElement x="422" y="15" width="57" height="14"/>
+						<textElement/>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{TS_NASCIMENTO}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="480" y="15" width="31" height="14"/>
+						<textElement/>
+						<text><![CDATA[Sexo:]]></text>
+					</staticText>
+					<textField isBlankWhenNull="true">
+						<reportElement x="511" y="15" width="64" height="14"/>
+						<textElement/>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{CD_SEXO}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="29" y="29" width="43" height="14"/>
+						<textElement>
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[Telefone: ]]></text>
+					</staticText>
+					<textField isBlankWhenNull="true">
+						<reportElement x="73" y="29" width="100" height="14"/>
+						<textElement/>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{NR_TELEFONE_COMPROVANTE}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="315" y="29" width="43" height="14"/>
+						<textElement>
+							<font fontName="Arial"/>
+						</textElement>
+						<text><![CDATA[E-mail:]]></text>
+					</staticText>
+					<textField isBlankWhenNull="true">
+						<reportElement x="359" y="29" width="216" height="14"/>
+						<textElement/>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{DS_EMAIL_COMPROVANTE}]]></textFieldExpression>
+					</textField>
+					<line>
+						<reportElement x="0" y="45" width="575" height="1"/>
+					</line>
+				</frame>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="50">
+				<frame>
+					<reportElement x="0" y="0" width="575" height="50"/>
+				</frame>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="GP_CONFIRMACAO_AGENDAMENTO">
+		<groupExpression><![CDATA[$F{CD_CONFIRMACAO_AGENDAMENTO}]]></groupExpression>
+		<groupHeader>
+			<band height="67">
+				<frame>
+					<reportElement x="0" y="0" width="575" height="67"/>
+					<staticText>
+						<reportElement x="0" y="50" width="115" height="15"/>
+						<textElement>
+							<font fontName="Arial" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Serviços agendados:]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="0" y="0" width="55" height="14"/>
+						<textElement/>
+						<text><![CDATA[Protocolo:]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="0" y="14" width="55" height="14"/>
+						<textElement/>
+						<text><![CDATA[Convênio:]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="0" y="28" width="55" height="14"/>
+						<textElement/>
+						<text><![CDATA[Plano:]]></text>
+					</staticText>
+					<textField isBlankWhenNull="true">
+						<reportElement x="55" y="0" width="100" height="14"/>
+						<textElement>
+							<font fontName="Arial"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{NR_PROTOCOLO}]]></textFieldExpression>
+					</textField>
+					<textField isBlankWhenNull="true">
+						<reportElement x="55" y="14" width="198" height="14"/>
+						<textElement/>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{DS_CONVENIO}]]></textFieldExpression>
+					</textField>
+					<textField isBlankWhenNull="true">
+						<reportElement x="55" y="28" width="198" height="14"/>
+						<textElement/>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{DS_PLANO}]]></textFieldExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="17">
+				<frame>
+					<reportElement x="0" y="0" width="575" height="16"/>
+					<textField>
+						<reportElement x="287" y="0" width="130" height="14"/>
+						<textElement/>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{CD_USUARIO_CONFIRMACAO}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="219" y="0" width="67" height="14"/>
+						<textElement/>
+						<text><![CDATA[Agendado por:]]></text>
+					</staticText>
+					<line>
+						<reportElement x="0" y="15" width="575" height="1"/>
+					</line>
+				</frame>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="1" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="46" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="575" height="46"/>
+				<textField isBlankWhenNull="true">
+					<reportElement x="0" y="0" width="186" height="14"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{P_NM_EMPRESA}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="14" width="100" height="14"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Unify]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="28" width="186" height="14"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Comprovante de Agendamento]]></text>
+				</staticText>
+				<line>
+					<reportElement x="0" y="44" width="575" height="1"/>
+				</line>
+				<textField>
+					<reportElement x="540" y="0" width="17" height="14"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report">
+					<reportElement x="558" y="0" width="17" height="14"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="553" y="0" width="6" height="14"/>
+					<textElement/>
+					<text><![CDATA[/]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="420" y="14" width="58" height="14"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Emitido por:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="420" y="28" width="58" height="14"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Em:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="479" y="14" width="96" height="14"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{P_USUARIO}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="479" y="28" width="96" height="14"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{P_SYSDATE}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="82" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="575" height="80"/>
+				<textField isBlankWhenNull="true">
+					<reportElement x="20" y="0" width="55" height="15"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{DATA_AGENDA}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="76" y="0" width="29" height="15"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{TS_HORARIO_INICIAL}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="112" y="0" width="336" height="15"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{DS_SERVICO}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="76" y="46" width="377" height="15" isRemoveLineWhenBlank="true"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{NM_PROFISSIONAL_SAUDE}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="76" y="16" width="123" height="15"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{DS_UNIDADE}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement positionType="Float" x="0" y="77" width="575" height="1"/>
+					<graphicElement>
+						<pen lineStyle="Dotted"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement x="106" y="0" width="6" height="14"/>
+					<textElement/>
+					<text><![CDATA[-]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="20" y="16" width="55" height="15"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Unidade:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="20" y="46" width="55" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{NM_PROFISSIONAL_SAUDE} != null]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Profissional:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="470" y="16" width="20" height="15">
+						<printWhenExpression><![CDATA[$F{NR_TELEFONE_CONTATO_UNIDADE} != null]]></printWhenExpression>
+					</reportElement>
+					<textElement/>
+					<text><![CDATA[Tel.:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="492" y="16" width="83" height="15"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{NR_TELEFONE_CONTATO_UNIDADE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+					<reportElement x="76" y="31" width="499" height="15">
+						<printWhenExpression><![CDATA[$F{CD_ENDERECO} != null]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font fontName="Arial" size="10" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{DS_TIPO_LOGRADOURO} + " " + $F{DS_ENDERECO} + ", " + $F{DS_BAIRRO} + ", " + $F{DS_CIDADE} + " - " + $F{CD_ESTADO}]]></textFieldExpression>
+				</textField>
+				<subreport>
+					<reportElement x="20" y="61" width="555" height="14" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="P_CD_SERVICO">
+						<subreportParameterExpression><![CDATA[$F{CD_SERVICO}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "comprovante-agendamento-orientacao-preparo.jasper"]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement x="20" y="32" width="55" height="14"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Endereço:]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="1" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="2" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

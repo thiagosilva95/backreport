@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="comprovante-agendamento-orientacao-preparo" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_CD_SERVICO" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT DISTINCT op.ds_orientacao_preparo
+     , sop.cd_servico
+FROM mvagenda.orientacao_preparo op
+   , mvagenda.servico_orientacao_preparo sop
+WHERE op.cd_orientacao_preparo = sop.cd_orientacao_preparo
+AND sop.cd_servico = $P{P_CD_SERVICO}]]>
+	</queryString>
+	<field name="DS_ORIENTACAO_PREPARO" class="java.lang.String"/>
+	<field name="CD_SERVICO" class="java.math.BigDecimal"/>
+	<group name="CD_SERVICO">
+		<groupExpression><![CDATA[$F{CD_SERVICO}]]></groupExpression>
+		<groupHeader>
+			<band height="12">
+				<frame>
+					<reportElement x="0" y="0" width="555" height="12"/>
+					<staticText>
+						<reportElement x="0" y="0" width="108" height="12"/>
+						<textElement>
+							<font fontName="Arial" size="10" isBold="false" pdfFontName="Helvetica"/>
+						</textElement>
+						<text><![CDATA[Orientações de preparo:]]></text>
+					</staticText>
+				</frame>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="1" splitType="Stretch"/>
+	</title>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="555" height="15"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="110" y="0" width="445" height="15"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{DS_ORIENTACAO_PREPARO}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

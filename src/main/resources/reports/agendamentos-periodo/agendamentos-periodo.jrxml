@@ -1,0 +1,502 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="agendamentos-periodo" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="575" leftMargin="10" rightMargin="10" topMargin="5" bottomMargin="5">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="B_16_Style" mode="Opaque" forecolor="#000000" backcolor="#D9D9D9" isItalic="false" isUnderline="false"/>
+	<parameter name="P_NM_EMPRESA" class="java.lang.String"/>
+	<parameter name="P_SYSDATE" class="java.lang.String"/>
+	<parameter name="P_USUARIO" class="java.lang.String"/>
+	<parameter name="P_CD_SERVICO" class="java.lang.Integer"/>
+	<parameter name="P_CD_PROFISSIONAL" class="java.lang.Integer"/>
+	<parameter name="P_CD_UNIDADE" class="java.lang.Integer"/>
+	<parameter name="P_CD_RECURSO" class="java.lang.Integer"/>
+	<parameter name="P_CD_TIPO_MARCACAO" class="java.lang.Integer"/>
+	<parameter name="P_CD_EMPRESA" class="java.lang.Integer"/>
+	<parameter name="P_DT_INICIO" class="java.lang.String"/>
+	<parameter name="P_DT_FIM" class="java.lang.String"/>
+	<parameter name="P_CD_CLIENTE" class="java.lang.Integer"/>
+	<parameter name="P_CD_CONVENIO" class="java.lang.Integer"/>
+	<parameter name="P_CD_TIPO_AGENDAMENTO" class="java.lang.Integer"/>
+	<parameter name="P_SN_ENCAIXE" class="java.lang.String"/>
+	<parameter name="CF_PROFISSIONAL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[($P{P_CD_PROFISSIONAL} != null) ? ("AND p.cd_profissional_saude = " + $P{P_CD_PROFISSIONAL}.toString()) : (" ")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CF_SERVICO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[($P{P_CD_SERVICO} != null) ? ("AND a.cd_servico = " + $P{P_CD_SERVICO}.toString()) : (" ")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CF_RECURSO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[($P{P_CD_RECURSO} != null) ? ("AND a.cd_recurso = " + $P{P_CD_RECURSO}.toString()) : (" ")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CF_UNIDADE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[($P{P_CD_UNIDADE} != null) ? ("AND a.cd_unidade = " + $P{P_CD_UNIDADE}.toString()) : (" ")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CF_TIPO_MARCACAO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[($P{P_CD_TIPO_MARCACAO} != null) ? ("AND ag.cd_tipo_marcacao = " + $P{P_CD_TIPO_MARCACAO}.toString()) : (" ")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CF_TIPO_AGENDAMENTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[($P{P_CD_TIPO_AGENDAMENTO} != null) ? ("AND a.cd_tipo_agendamento = " + $P{P_CD_TIPO_AGENDAMENTO}.toString()) : (" ")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CF_CONVENIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[($P{P_CD_CONVENIO} != null) ? ("AND ag.cd_convenio = " + $P{P_CD_CONVENIO}.toString()) : (" ")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CF_ENCAIXE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[($P{P_SN_ENCAIXE} != null) ? ("AND ag.sn_encaixe = " + $P{P_SN_ENCAIXE}) : (" ")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="parameter1" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT ag.cd_agendamento
+     , ca.nr_protocolo
+     , decode(ag.sn_encaixe, 'S', 'Sim', 'N','Não') sn_encaixe
+     , to_char(ag.ts_horario_inicial, 'dd/MM/yyyy') data_agenda
+     , to_char(ag.ts_horario_inicial, 'hh24:mi') ts_horario_inicial
+     , to_char(ag.ts_horario_final, 'hh24:mi') ts_horario_final
+     , pac.cd_paciente
+     , pac.nm_paciente
+     , to_char(pac.ts_nascimento, 'dd/MM/yyyy') ts_nascimento
+     , ag.ds_email_comprovante
+     , ag.nr_telefone_comprovante
+     , a.cd_agenda
+     , ta.cd_tipo_agendamento
+     , ta.ds_tipo_agendamento
+     , tm.cd_tipo_marcacao
+     , tm.ds_tipo_marcacao
+     , u.cd_unidade
+     , u.ds_unidade
+     , s.cd_servico
+     , s.ds_servico
+     , p.cd_profissional_saude
+     , p.nm_profissional_saude
+     , r.cd_recurso
+     , r.ds_recurso
+     , c.cd_convenio
+     , c.ds_convenio
+FROM mvagenda.agendamento ag
+    ,mvagenda.confirmacao_agendamento ca
+    ,mvagenda.convenio c
+    ,mvagenda.plano pla
+    ,mvagenda.agenda a
+    ,mvagenda.tipo_agendamento ta
+    ,mvagenda.tipo_marcacao tm
+    ,mvagenda.servico s
+    ,mvagenda.unidade u
+    ,mvagenda.paciente pac
+    ,mvagenda.profissional_saude p
+    ,mvagenda.recurso r
+WHERE ag.cd_agenda = a.cd_agenda
+AND ag.cd_confirmacao_agendamento = ca.cd_confirmacao_agendamento
+AND a.cd_servico = s.cd_servico
+AND a.cd_unidade = u.cd_unidade
+AND a.cd_profissional_saude = p.cd_profissional_saude(+)
+AND ag.cd_paciente = pac.cd_paciente
+AND a.cd_tipo_agendamento = ta.cd_tipo_agendamento
+AND ag.cd_tipo_marcacao = tm.cd_tipo_marcacao(+)
+AND ag.cd_convenio = c.cd_convenio
+AND ag.cd_plano = pla.cd_plano
+AND pla.cd_convenio = c.cd_convenio
+AND s.cd_tipo_agendamento = ta.cd_tipo_agendamento
+AND r.cd_recurso(+) = a.cd_recurso
+AND ag.cd_cliente = $P{P_CD_CLIENTE}
+AND ag.cd_empresa = $P{P_CD_EMPRESA}
+AND ag.ts_horario_inicial BETWEEN to_date($P{P_DT_INICIO}, 'yyyy-MM-dd') AND to_date($P{P_DT_FIM}, 'yyyy-MM-dd')
+$P!{CF_PROFISSIONAL}
+$P!{CF_CONVENIO}
+$P!{CF_RECURSO}
+$P!{CF_SERVICO}
+$P!{CF_TIPO_AGENDAMENTO}
+$P!{CF_TIPO_MARCACAO}
+$P!{CF_ENCAIXE}
+$P!{CF_UNIDADE}
+ORDER BY ag.ts_horario_inicial DESC]]>
+	</queryString>
+	<field name="CD_AGENDAMENTO" class="java.math.BigDecimal"/>
+	<field name="NR_PROTOCOLO" class="java.lang.String"/>
+	<field name="SN_ENCAIXE" class="java.lang.String"/>
+	<field name="DATA_AGENDA" class="java.lang.String"/>
+	<field name="TS_HORARIO_INICIAL" class="java.lang.String"/>
+	<field name="TS_HORARIO_FINAL" class="java.lang.String"/>
+	<field name="CD_PACIENTE" class="java.math.BigDecimal"/>
+	<field name="NM_PACIENTE" class="java.lang.String"/>
+	<field name="TS_NASCIMENTO" class="java.lang.String"/>
+	<field name="DS_EMAIL_COMPROVANTE" class="java.lang.String"/>
+	<field name="NR_TELEFONE_COMPROVANTE" class="java.lang.String"/>
+	<field name="CD_AGENDA" class="java.math.BigDecimal"/>
+	<field name="CD_TIPO_AGENDAMENTO" class="java.math.BigDecimal"/>
+	<field name="DS_TIPO_AGENDAMENTO" class="java.lang.String"/>
+	<field name="CD_TIPO_MARCACAO" class="java.math.BigDecimal"/>
+	<field name="DS_TIPO_MARCACAO" class="java.lang.String"/>
+	<field name="CD_UNIDADE" class="java.math.BigDecimal"/>
+	<field name="DS_UNIDADE" class="java.lang.String"/>
+	<field name="CD_SERVICO" class="java.math.BigDecimal"/>
+	<field name="DS_SERVICO" class="java.lang.String"/>
+	<field name="CD_PROFISSIONAL_SAUDE" class="java.math.BigDecimal"/>
+	<field name="NM_PROFISSIONAL_SAUDE" class="java.lang.String"/>
+	<field name="CD_RECURSO" class="java.math.BigDecimal"/>
+	<field name="DS_RECURSO" class="java.lang.String"/>
+	<field name="CD_CONVENIO" class="java.math.BigDecimal"/>
+	<field name="DS_CONVENIO" class="java.lang.String"/>
+	<variable name="V_SUB_TOTAL_AGENDAMENTO" class="java.math.BigDecimal" resetType="Group" resetGroup="GROUP_HORARIO_INICIAL" calculation="Count">
+		<variableExpression><![CDATA[$F{NR_PROTOCOLO}]]></variableExpression>
+	</variable>
+	<variable name="V_TOTAL_GERAL_AGENDAMENTO" class="java.math.BigDecimal" calculation="Count">
+		<variableExpression><![CDATA[$F{NR_PROTOCOLO}]]></variableExpression>
+	</variable>
+	<group name="GROUP_HORARIO_INICIAL">
+		<groupExpression><![CDATA[$F{DATA_AGENDA}]]></groupExpression>
+		<groupHeader>
+			<band height="23">
+				<frame>
+					<reportElement x="0" y="0" width="574" height="20"/>
+					<frame>
+						<reportElement style="B_16_Style" positionType="Float" mode="Opaque" x="0" y="2" width="574" height="14" isPrintInFirstWholeBand="true" backcolor="#D9D9D9">
+							<property name="net.sf.jasperreports.text.truncate.at.char" value="true"/>
+						</reportElement>
+						<box>
+							<topPen lineWidth="1.0"/>
+							<leftPen lineWidth="1.0"/>
+							<bottomPen lineWidth="1.0"/>
+							<rightPen lineWidth="1.0"/>
+						</box>
+						<staticText>
+							<reportElement positionType="Float" x="3" y="1" width="29" height="12" isPrintInFirstWholeBand="true"/>
+							<textElement>
+								<font fontName="Arial" size="8" isBold="true"/>
+							</textElement>
+							<text><![CDATA[Data:]]></text>
+						</staticText>
+						<textField isBlankWhenNull="true">
+							<reportElement positionType="Float" x="32" y="2" width="137" height="12" isPrintInFirstWholeBand="true"/>
+							<textElement>
+								<font fontName="Arial" size="8" isBold="true"/>
+							</textElement>
+							<textFieldExpression class="java.lang.String"><![CDATA[$F{DATA_AGENDA}]]></textFieldExpression>
+						</textField>
+					</frame>
+				</frame>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="18">
+				<frame>
+					<reportElement positionType="Float" x="0" y="2" width="574" height="14"/>
+					<textField isBlankWhenNull="true">
+						<reportElement positionType="Float" x="533" y="3" width="40" height="10" isPrintInFirstWholeBand="true"/>
+						<textElement>
+							<font fontName="Arial" size="8" isBold="true"/>
+						</textElement>
+						<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{V_SUB_TOTAL_AGENDAMENTO}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement positionType="Float" x="403" y="3" width="118" height="10" isPrintInFirstWholeBand="true"/>
+						<textElement textAlignment="Right">
+							<font fontName="Arial" size="8" isBold="true"/>
+						</textElement>
+						<text><![CDATA[Sub-Total de Agendamentos:]]></text>
+					</staticText>
+					<line>
+						<reportElement x="0" y="1" width="574" height="1"/>
+					</line>
+				</frame>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="1" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="112" splitType="Stretch">
+			<frame>
+				<reportElement x="6" y="0" width="569" height="46"/>
+				<textField isBlankWhenNull="true">
+					<reportElement x="0" y="1" width="187" height="14"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{P_NM_EMPRESA}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="1" y="15" width="186" height="14"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Unify]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="1" y="30" width="186" height="14"/>
+					<textElement>
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Relatório de agendamentos por período]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="410" y="15" width="58" height="14"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Emitido por:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="410" y="30" width="58" height="14"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial"/>
+					</textElement>
+					<text><![CDATA[Em:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="472" y="15" width="96" height="14"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{P_USUARIO}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="472" y="30" width="96" height="14"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{P_SYSDATE}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="515" y="1" width="24" height="14"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report">
+					<reportElement x="547" y="1" width="18" height="14"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="542" y="0" width="9" height="20"/>
+					<textElement/>
+					<text><![CDATA[/]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="47" width="574" height="62"/>
+				<frame>
+					<reportElement positionType="Float" x="0" y="0" width="574" height="62" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true"/>
+					<staticText>
+						<reportElement positionType="Float" x="5" y="6" width="29" height="15" isPrintInFirstWholeBand="true"/>
+						<textElement>
+							<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Hr. Ini]]></text>
+					</staticText>
+					<staticText>
+						<reportElement positionType="Float" x="40" y="6" width="29" height="15" isPrintInFirstWholeBand="true"/>
+						<textElement>
+							<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Hr. Fim]]></text>
+					</staticText>
+					<staticText>
+						<reportElement key="B_22" positionType="Float" x="74" y="6" width="200" height="15" isPrintInFirstWholeBand="true" forecolor="#000000"/>
+						<textElement markup="styled">
+							<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Paciente]]></text>
+					</staticText>
+					<staticText>
+						<reportElement key="C_P" positionType="Float" x="44" y="21" width="183" height="15" isPrintInFirstWholeBand="true"/>
+						<textElement>
+							<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Profissional]]></text>
+					</staticText>
+					<staticText>
+						<reportElement positionType="Float" x="44" y="36" width="183" height="15" isPrintInFirstWholeBand="true">
+							<property name="net.sf.jasperreports.text.truncate.at.char" value="true"/>
+						</reportElement>
+						<textElement>
+							<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Serviço]]></text>
+					</staticText>
+					<staticText>
+						<reportElement positionType="Float" x="44" y="51" width="183" height="10" isPrintInFirstWholeBand="true"/>
+						<textElement>
+							<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Tipo de Marcação]]></text>
+					</staticText>
+					<staticText>
+						<reportElement positionType="Float" x="284" y="21" width="147" height="15" isPrintInFirstWholeBand="true"/>
+						<textElement>
+							<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Recurso]]></text>
+					</staticText>
+					<staticText>
+						<reportElement positionType="Float" x="284" y="36" width="147" height="15" isPrintInFirstWholeBand="true"/>
+						<textElement>
+							<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Unidade]]></text>
+					</staticText>
+					<staticText>
+						<reportElement positionType="Float" x="284" y="51" width="147" height="10" isPrintInFirstWholeBand="true"/>
+						<textElement>
+							<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Convênio]]></text>
+					</staticText>
+					<line>
+						<reportElement x="0" y="3" width="574" height="1"/>
+					</line>
+					<staticText>
+						<reportElement positionType="Float" x="284" y="6" width="57" height="15" isPrintInFirstWholeBand="true"/>
+						<textElement>
+							<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Data Nasc.]]></text>
+					</staticText>
+					<staticText>
+						<reportElement positionType="Float" x="386" y="6" width="66" height="15" isPrintInFirstWholeBand="true"/>
+						<textElement>
+							<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Fone Paciente]]></text>
+					</staticText>
+					<staticText>
+						<reportElement positionType="Float" x="533" y="5" width="40" height="15" isPrintInFirstWholeBand="true"/>
+						<textElement>
+							<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Encaixe]]></text>
+					</staticText>
+				</frame>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="62">
+			<frame>
+				<reportElement x="0" y="0" width="574" height="60"/>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="3" y="3" width="29" height="14" isPrintInFirstWholeBand="true"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{TS_HORARIO_INICIAL}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="34" y="3" width="29" height="14" isPrintInFirstWholeBand="true"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{TS_HORARIO_FINAL}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="65" y="3" width="209" height="14" isPrintInFirstWholeBand="true"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{NM_PACIENTE}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="34" y="17" width="240" height="14" isPrintInFirstWholeBand="true"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{NM_PROFISSIONAL_SAUDE}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="34" y="31" width="240" height="14" isPrintInFirstWholeBand="true"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{DS_SERVICO}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="34" y="45" width="240" height="11" isPrintInFirstWholeBand="true"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{DS_TIPO_MARCACAO}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="285" y="31" width="181" height="14"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{DS_UNIDADE}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="2" width="574" height="1"/>
+				</line>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="285" y="17" width="181" height="14" isPrintInFirstWholeBand="true"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{DS_RECURSO}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="285" y="45" width="181" height="11"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{DS_CONVENIO}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="285" y="3" width="57" height="14" isPrintInFirstWholeBand="true"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{TS_NASCIMENTO}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="533" y="3" width="40" height="14" isPrintInFirstWholeBand="true"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{SN_ENCAIXE}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="386" y="3" width="57" height="14" isPrintInFirstWholeBand="true"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{NR_TELEFONE_COMPROVANTE}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="26" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="574" height="23"/>
+				<staticText>
+					<reportElement x="403" y="5" width="118" height="14" isPrintInFirstWholeBand="true"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Geral de Agendamentos:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="533" y="5" width="41" height="14"/>
+					<textElement>
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{V_TOTAL_GERAL_AGENDAMENTO}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="3" width="574" height="1"/>
+				</line>
+			</frame>
+		</band>
+	</summary>
+</jasperReport>
